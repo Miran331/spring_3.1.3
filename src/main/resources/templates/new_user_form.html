@@ -3,93 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Добавить пользователя</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
 <body>
-<div class="container mt-4">
-    <h2 class="mb-3">Добавить пользователя</h2>
-    <form th:action="@{/admin/add_user}" th:object="${user}" th:method="post" class="needs-validation" novalidate>
-        <div class="row mb-3">
-            <label for="firstName" class="col-sm-2 col-form-label">Имя:</label>
-            <div class="col-sm-10">
-                <input type="text" th:field="*{firstName}" id="firstName" class="form-control" required>
-                <div class="invalid-feedback">
-                    Пожалуйста, введите имя.
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="lastName" class="col-sm-2 col-form-label">Фамилия:</label>
-            <div class="col-sm-10">
-                <input type="text" th:field="*{lastName}" id="lastName" class="form-control" required>
-                <div class="invalid-feedback">
-                    Пожалуйста, введите фамилию.
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="birthDay" class="col-sm-2 col-form-label">Дата рождения:</label>
-            <div class="col-sm-10">
-                <input type="date" th:field="*{birthDay}" id="birthDay" class="form-control" required>
-                <div class="invalid-feedback">
-                    Пожалуйста, выберите дату рождения.
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="username" class="col-sm-2 col-form-label">Логин:</label>
-            <div class="col-sm-10">
-                <input type="text" th:field="*{username}" id="username" class="form-control" required>
-                <div class="invalid-feedback">
-                    Пожалуйста, введите логин.
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="password" class="col-sm-2 col-form-label">Пароль:</label>
-            <div class="col-sm-10">
-                <input type="password" th:field="*{password}" id="password" class="form-control" required>
-                <div class="invalid-feedback">
-                    Пожалуйста, введите пароль.
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label class="col-sm-2 col-form-label">Роли:</label>
-            <div class="col-sm-10">
-                <div class="form-check" th:each="role : ${roles}">
-                    <input type="checkbox" class="form-check-input" name="roles" th:value="${role.getRoleId()}" th:text="${role.getRoleName()}">
-                </div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-sm-10 offset-sm-2">
-                <button type="submit" class="btn btn-primary">Добавить</button>
-                <a th:href="@{/admin}" class="btn btn-secondary">Отмена</a>
-            </div>
-        </div>
-    </form>
-</div>
+<br>
+<form action="#" th:action="@{/admin/add_user}" th:object="${user}" th:method="post">
 
-<script>
-
-    (function() {
-        'use strict'
-
-        const forms = document.querySelectorAll('.needs-validation')
-
-        // Loop over the forms and prevent submission
-        Array.from(forms).forEach(form => {
-            form.addEventListener('submit', event => {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-
-                form.classList.add('was-validated')
-            }, false)
-        })
-    })()
-</script>
+    <label for="firstName"> Имя: </label>
+    <input type="text" th:field="*{firstName}" id="firstName"/>
+    <br/><br/>
+    <label for="lastName"> Фамилия: </label>
+    <input type="text" th:field="*{lastName}" id="lastName"/>
+    <br/><br/>
+    <label for="birthDay"> Дата рождения: </label>
+    <input type="date" th:field="*{birthDay}" id="birthDay"/>
+    <br/><br/>
+    <label for="username">Логин</label>
+    <input type="text" th:field="*{username}" id="username"/>
+    <br/><br/>
+    <label for="password">Пароль</label>
+    <input type="password" th:field="*{password}" id="password"/>
+    <br/><br/>
+    <label>Выберите роль:</label>
+    <div>
+        <label><input type="checkbox" name="roles" value="1"> ROLE_ADMIN</label>
+        <label><input type="checkbox" name="roles" value="2"> ROLE_USER</label>
+    </div>
+    <br/><br/>
+    <input type="submit" value="Добавить"/>
+</form>
+<br>
+<form th:method="GET" th:action="@{/admin}">
+    <input type="submit" value="Отмена">
+</form>
 </body>
 </html>
