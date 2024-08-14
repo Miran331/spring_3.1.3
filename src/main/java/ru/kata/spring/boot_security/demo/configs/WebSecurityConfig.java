@@ -30,20 +30,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().and() // Включите CORS, если нужно
-                .authorizeRequests() // Настройка авторизации
-                .antMatchers("/", "/index", "/login").permitAll() // Разрешить доступ к корневой странице, /index и /login
-                .antMatchers("/admin/**").hasRole("ADMIN") // Только для пользователей с ролью "ADMIN"
-                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Для пользователей с ролью "USER" или "ADMIN"
-                .anyRequest().authenticated() //  Для всех остальных запросов требуется аутентификация
+                .cors().and()
+                .authorizeRequests()
+                .antMatchers("/", "/index", "/login").permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                .anyRequest().authenticated()
                 .and()
-                .formLogin() //  Настройка входа
-                .successHandler(successUserHandler) //  Обработчик успешного входа
+                .formLogin().successHandler(successUserHandler)
                 .permitAll()
                 .and()
-                .logout() // Настройка выхода
-                .logoutUrl("/logout") //  URL для выхода
-                .logoutSuccessUrl("/") //  Перенаправление после выхода
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
                 .permitAll();
     }
 
