@@ -9,15 +9,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDAO;
+import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.entity.User;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserDAO userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @PersistenceContext // Внедрение EntityManager
+    private EntityManager entityManager;
 
     @Autowired
     public UserServiceImpl(UserDAO userRepository, @Lazy PasswordEncoder passwordEncoder) {
@@ -27,8 +35,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void saveUser(User user) {
+        Set<Role> userRoles = new HashSet<>(user.getRoles());
+        for (Role role : userRoles) {
+            if (role.getRoleId() == null) {
+                entityManager.persist(role);
+            }
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.addUser(user);
+        entityManager.persist(user);
     }
 
     @Override

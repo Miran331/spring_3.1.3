@@ -30,33 +30,34 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().and()
-                .authorizeRequests()
-                .antMatchers("/", "/index", "/login").permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                .anyRequest().authenticated()
+                .cors().and() // Включите CORS, если нужно
+                .authorizeRequests() // Настройка авторизации
+                .antMatchers("/", "/index", "/login").permitAll() // Разрешить доступ к корневой странице, /index и /login
+                .antMatchers("/admin/**").hasRole("ADMIN") // Только для пользователей с ролью "ADMIN"
+                .antMatchers("/user/**").hasAnyRole("USER", "ADMIN") // Для пользователей с ролью "USER" или "ADMIN"
+                .anyRequest().authenticated() //  Для всех остальных запросов требуется аутентификация
                 .and()
-                .formLogin().successHandler(successUserHandler)
+                .formLogin() //  Настройка входа
+                .successHandler(successUserHandler) //  Обработчик успешного входа
                 .permitAll()
                 .and()
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
+                .logout() // Настройка выхода
+                .logoutUrl("/logout") //  URL для выхода
+                .logoutSuccessUrl("/") //  Перенаправление после выхода
                 .permitAll();
     }
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:8080"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
-    @Bean
+     @Bean
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
