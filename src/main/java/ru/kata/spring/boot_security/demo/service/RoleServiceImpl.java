@@ -2,45 +2,34 @@ package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.dao.RoleDAO;
-import ru.kata.spring.boot_security.demo.entity.Role;
+import ru.kata.spring.boot_security.demo.dao.RoleDao;
+import ru.kata.spring.boot_security.demo.model.Role;
 
-import java.util.Set;
+import java.util.List;
 
 @Service
-@Transactional
 public class RoleServiceImpl implements RoleService {
-    private final RoleDAO roleRepository;
+
+    private final RoleDao roleDao;
 
     @Autowired
-    public RoleServiceImpl(RoleDAO roleRepository) {
-        this.roleRepository = roleRepository;
+    public RoleServiceImpl(RoleDao roleDao) {
+        this.roleDao = roleDao;
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Set<Role> getAllRoles() {
-        return roleRepository.getAllRoles();
+    public List<Role> getAllRoles() {
+        return roleDao.getAllRoles();
+    }
+
+
+    @Override
+    public void saveRole(Role role) {
+        roleDao.saveRole(role);
     }
 
     @Override
-    public Role saveRole(Role role) {
-        return roleRepository.saveRole(role);
-    }
-
-    @Override
-    public Role getRoleById(Long id) {
-        return roleRepository.getRoleById(id);
-    }
-
-    @Override
-    public void deleteRoleById(Long id) {
-        roleRepository.deleteRoleById(id);
-    }
-
-    @Override
-    public Set<Role> findDyIds(Set<Long> ids) {
-        return roleRepository.findByIds(ids);
+    public Role findRoleById(Long id) {
+        return roleDao.findRoleById(id);
     }
 }

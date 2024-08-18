@@ -1,49 +1,54 @@
 package ru.kata.spring.boot_security.demo.init;
 
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
-import ru.kata.spring.boot_security.demo.entity.Role;
-import ru.kata.spring.boot_security.demo.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.kata.spring.boot_security.demo.model.Role;
+import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Date;
+import javax.annotation.PostConstruct;
 
-@Configuration
+@Component
 public class Init {
 
     private final UserService userService;
     private final RoleService roleService;
-    private final PasswordEncoder passwordEncoder;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public Init(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
+    @Autowired
+    public Init(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
-        this.passwordEncoder = passwordEncoder;
     }
 
-    @Bean
-    @Transactional
-    CommandLineRunner initDatabase() {
-        return args -> {
-            Role adminRole = new Role("ROLE_ADMIN");
-            Role userRole = new Role("ROLE_USER");
+    @PostConstruct
+    private void init() {
+        Role role1 = new Role("ADMIN");
+        Role role2 = new Role("USER");
+        roleService.saveRole(role1);
+        roleService.saveRole(role2);
 
-            User admin = new User("Admin", "Adminov", new Date(), "admin", "admin");
-            admin.getRoles().add(adminRole);
-            userService.saveUser(admin);
 
-            User user = new User("User", "Userov", new Date(), "user", "user");
-            user.getRoles().add(userRole);
-            userService.saveUser(user);
-        };
-        }
+        User user1 = new User();
+        user1.setName("Иван");
+        user1.setSurname("Иванов");
+        user1.setEmail("Test1@mail.ru");
+        user1.setPassword("admin");
+        user1.addRole(role1);
+        user1.addRole(role2);
+
+        User user2 = new User();
+        user2.setName("Петр");
+        user2.setSurname("Петров");
+        user2.setEmail("Test2@mail.ru");
+        user2.setPassword("user");
+        user2.addRole(role2);
+
+
+
+
+        userService.saveUser(user1);
+        userService.saveUser(user2);
+
     }
+}
