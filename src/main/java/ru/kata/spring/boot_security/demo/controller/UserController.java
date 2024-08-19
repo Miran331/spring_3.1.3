@@ -1,5 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -8,13 +10,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
+import static java.rmi.server.LogStream.log;
+
 @Controller
 public class UserController {
 
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
     private final RoleService roleService;
 
@@ -47,13 +53,17 @@ public class UserController {
     }
 
     @PostMapping("/admin/create")
-    public String creat(@ModelAttribute("newUser") User user, @RequestParam(value = "index", required = false) Long[] identifiers) {
+    public String creat(@ModelAttribute("newUser") User user,
+                        @RequestParam(value = "identifiers", required = false) Long[] identifiers) {
         if (identifiers != null) {
             for (Long roleId : identifiers) {
-                user.addRole(roleService.findRoleById(roleId));
+                Role role = roleService.findRoleById(roleId);
+                if (role != null) {
+                    user.addRole(role);
+                } else {
+                    log("Role not found");
+                }
             }
-        } else {
-            user.addRole(roleService.findRoleById(2L));
         }
         userService.saveUser(user);
         return "redirect:/admin";
